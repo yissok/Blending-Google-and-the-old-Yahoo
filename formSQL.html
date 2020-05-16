@@ -1,0 +1,1474 @@
+<html>
+    <head>
+
+        <title>My Concept Map</title>
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+        <script type="text/javascript" src="js/vis.js"></script>
+        <link href="css/vis.css" rel="stylesheet" type="text/css" />
+        <link href="css/canvas.css" rel="stylesheet" type="text/css" />
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+
+
+        <script src="jquery-3.3.1.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/convertDataIntoGraph.js"></script>
+        <script type="text/javascript" src="js/addNode.js"></script>
+
+    </head>
+    <body id="myBody" bgcolor="#F2F3AE" style="width: 100%;margin-left:0px; overflow: hidden">
+
+        <h1 style="color:#3C1518" onclick="regenerateGraph();"><center>My Concept Map</center></h1>
+
+        <script>
+            function onOver() {
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                console.log("AWAGLIO");
+                document.getElementById("anotherOverlay").style.display = "block";
+                //
+            }
+
+            function offOver() {
+                document.getElementById("anotherOverlay").style.display = "none";
+            }
+        </script>
+        <script>
+
+            function regenerateGraph()
+            {
+                document.getElementById("mynetwork").innerHTML = "";
+
+                updateNodes();
+                callExp("mynetwork");
+            }
+            function resetDataSidebars()
+            {
+                document.getElementById("text").innerHTML = "";
+            }
+            var checked=false;
+            var checked1=false;
+            var checked2=false;
+            function editModeChanged(cb)
+            {
+                /*if(cb.checked == true){
+                    document.getElementById("mynetwork").style.pointerEvents="auto";
+                }else{
+                    document.getElementById("mynetwork").style.pointerEvents="none";
+                }*/
+                if(checked == true){
+                    //alert("was true, set to false");
+                    closeNavCheck();
+                    closeNavKey();
+                    document.getElementById("imgSwitch").src = "imgs/edit.png";
+                    document.getElementById("imgSwitch1").src = "imgs/blank.png";
+                    document.getElementById("imgSwitch2").src = "imgs/blank.png";
+                    document.getElementById("mynetwork").style.pointerEvents="none";
+                    checked=false;
+                    checked1=true;
+                    checked2=true;
+                }else{
+                    //alert("was false, set to true!!!");
+                    document.getElementById("imgSwitch").src = "imgs/editActive.png";
+                    document.getElementById("imgSwitch1").src = "imgs/keyboard.png";
+                    document.getElementById("imgSwitch2").src = "imgs/checklist.png";
+                    document.getElementById("mynetwork").style.pointerEvents="auto";
+                    checked=true;
+                    checked1=false;
+                    checked2=false;
+                    resetDataSidebars();
+                }
+
+                //var x = document.getElementById("editSwitch").value;
+                //document.getElementById("demo").innerHTML = "You selected: " + x;
+                //alert("aaaa: "+x);
+            }
+
+
+            function textMode(cb)
+            {
+                if(checked1 == true)
+                {
+                    document.getElementById("imgSwitch1").src = "imgs/keyboard.png";
+                    checked1=false;
+                    closeNavKey();
+                    resetDataSidebars();
+                }
+                else
+                {
+                    document.getElementById("imgSwitch1").src = "imgs/keyboardActive.png";
+                    checked1=true;
+                    closeNavCheck();
+                    openNavKey();
+                    resetDataSidebars();
+                }
+            }
+
+            function checkListMode(cb)
+            {
+                if(checked2 == true)
+                {
+                    document.getElementById("imgSwitch2").src = "imgs/checklist.png";
+                    checked2=false;
+                    closeNavCheck();
+                    resetDataSidebars();
+                }
+                else
+                {
+                    document.getElementById("imgSwitch2").src = "imgs/checklistActive.png";
+                    checked2=true;
+                    closeNavKey();
+                    openNavCheck();
+                    resetDataSidebars();
+                }
+            }
+
+
+
+
+            function deleteNode()
+            {
+                console.log(lastSelected);
+                if(lastSelected!=(-1))
+                {
+                    $.ajax({
+                        data:"eI="+lastSelected,
+                        url:'delete_by_ID.php',
+                        method:'POST',
+                        success:function(data)
+                        {
+                            console.log("DELETED");
+                            console.log(data);
+
+                            document.getElementById("mynetwork").innerHTML = "";
+                            updateNodes();
+                            callExp("mynetwork");
+                        }
+                    });
+                }
+            }
+
+            function allowMoreNodes()
+            {
+                tapsForAdminMode=tapsForAdminMode+1;
+                if(tapsForAdminMode>4)
+                {
+                    tapsForAdminMode=0;
+                    var txt;
+                    var person = prompt("Choose action:", "more nodes");
+                    if (person == null || person == "")
+                    {
+                        txt = "User cancelled the prompt.";
+                    }
+                    else
+                    {
+                        txt = "Hello " + person + "! How are you today?";
+                        if(person=="more nodes")
+                        {
+                            nodesAddedSoFar=allowance;
+                        }
+                        else
+                        {
+                            if(person=="admin")
+                            {
+                                document.getElementById("myBody").style.overflow = "scroll";
+                            }
+                            else
+                            {
+                                document.getElementById("myBody").style.overflow = "hidden";
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+
+
+
+        </script>
+
+
+        <script>
+            function on(nodeSummoned) {
+                document.getElementById("overlay").style.display = "block";
+                document.getElementById("text").innerHTML = nodeSummoned;
+
+            }
+
+            function off() {
+                document.getElementById("overlay").style.display = "none";
+            }
+        </script>
+
+
+
+
+        <script>
+            function openNavCheck() {
+                //document.getElementById("text").innerHTML = nodeSummoned;
+                $("#mynetwork").animate({width: "60%",height: "60%"}, 500 );
+                document.getElementById("mySidenavCheck").style.width = "40%";
+                document.getElementById("mynetwork").style.marginLeft = "40%";
+
+            }
+
+            function closeNavCheck() {
+                $("#mynetwork").animate({width: "100%",height: "100%"}, 500 );
+                document.getElementById("mySidenavCheck").style.width = "0";
+                document.getElementById("mynetwork").style.marginLeft= "0";
+
+                document.getElementById("imgSwitch2").src = "imgs/checklist.png";
+                checked2=false;
+
+
+            }
+
+            function openNavKey() {
+                $("#mynetwork").animate({width: "60%",height: "60%"}, 500 );
+                document.getElementById("mySidenavKey").style.width = "40%";
+                document.getElementById("mynetwork").style.marginLeft = "40%";
+
+            }
+
+            function closeNavKey() {
+                $("#mynetwork").animate({width: "100%",height: "100%"}, 500 );
+                document.getElementById("mySidenavKey").style.width = "0";
+                document.getElementById("mynetwork").style.marginLeft= "0";
+                document.getElementById("imgSwitch1").src = "imgs/keyboard.png";
+                checked1=false;
+            }
+        </script>
+
+
+
+        <script>
+            var currentSuggestionIndex=(-1);//from 0 to 26, -1 is not searched yet, 0 is most important suggetions, 1 is a, 2 is b, 3 is c ... y is 25, z is 26
+            let letters = ['relevant', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+            function addToSearchBar(id,arrOfSuggestions)
+            {
+                console.log('addToSearchBar');
+                console.log(String(id));
+                document.getElementById('query').value=String(id);
+                callExp("query");
+            }
+
+
+
+            function convertToHumanPls(resp)
+            {
+                console.log("before");
+
+                console.log(resp);
+                resp=decodeURIComponent(JSON.parse(resp));
+                console.log("after");
+
+                console.log(resp);
+                return resp;
+            }
+
+            function insertList()
+            {
+                var list=document.getElementById("txta").value;
+                var arrOfSuggestions = list.split("\n");
+                document.getElementById("content2").innerHTML="";
+                    document.getElementById("content2").innerHTML += "<br>";
+                    document.getElementById("content2").innerHTML += "<br>";
+                for(var i=0;i<arrOfSuggestions.length;i++)
+                {
+                    document.getElementById("content2").innerHTML += "<br>";
+                    document.getElementById("content2").innerHTML += '<a id="'+arrOfSuggestions[i]+'" style="font-size: 24px;display:inline-block" href="#" onclick="addToSearchBar(this.id);">'+arrOfSuggestions[i]+'</a> ';
+
+                }
+            }
+            
+            function AAAAAAAAAAfindSuggestions()
+            {
+                
+            }
+
+
+            function findSuggestions()
+            {
+
+                var queryVal=document.getElementById('query').value;
+                console.log('queryVal'+queryVal);
+                if (queryVal.length>0)
+                {
+
+                    console.log('entered');
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "https://cors-anywhere.herokuapp.com/http://suggestqueries.google.com/complete/search?client=firefox&q="+queryVal, true);
+                    xhr.setRequestHeader("myPc", 'suggestqueries.google.com');
+                    xhr.onload = function (e) {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+
+                                var resp = xhr.responseText;
+                                //$.ajax({});
+
+
+                                resp=convertToHumanPls(resp);
+
+                                var rgx = '\\["'+queryVal+'",\\[';
+                                var rgxFull = new RegExp(rgx,"g");
+                                var replaces=resp.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+                                console.log(rgxFull);
+
+                                rgx = '\\](.*)';
+                                rgxFull = new RegExp(rgx,"g");
+                                replaces=replaces.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+
+
+                                rgx = '\\[(.*)';
+                                rgxFull = new RegExp(rgx,"g");
+                                replaces=replaces.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+
+                                rgx = '"';
+                                rgxFull = new RegExp(rgx,"g");
+                                replaces=replaces.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+
+                                var arrOfSuggestions = replaces.split(",");
+                                document.getElementById("content2").innerHTML="";
+                                for(var i=0;i<arrOfSuggestions.length;i++)
+                                {
+                                    var splittedSuggestion = arrOfSuggestions[i].split(" ");
+                                    document.getElementById("content2").innerHTML += "<br>";
+                                    for(var j=0;j<splittedSuggestion.length;j++)
+                                    {
+                                        document.getElementById("content2").innerHTML += '<a id="'+splittedSuggestion[j]+'" style="font-size: 24px;display:inline-block" href="#" onclick="addToSearchBar(this.id);">'+splittedSuggestion[j]+'</a> ';
+                                    }
+                                }
+                                callExp("content2");
+                                currentSuggestionIndex=0;
+
+                                document.getElementById("letter").innerHTML = letters[currentSuggestionIndex];
+                            } else {
+                                console.error(xhr.statusText);
+                            }
+                        }
+                    };
+                    xhr.onerror = function (e) {
+                        console.error(xhr.statusText);
+                    };
+                    xhr.send(null);
+                }
+            }
+
+
+
+
+
+
+
+            function findSuggestionsGivenAdditionalLetter()
+            {
+                if(currentSuggestionIndex==0)
+                {
+                    var queryVal=document.getElementById('query').value;
+                }
+                else
+                {
+                    var queryVal=document.getElementById('query').value+" "+letters[currentSuggestionIndex];
+                }
+                console.log('additional qval: '+queryVal);
+                if (queryVal.length>0)
+                {
+
+                    console.log('entered');
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "https://cors-anywhere.herokuapp.com/http://suggestqueries.google.com/complete/search?client=firefox&q="+queryVal, true);
+                    xhr.setRequestHeader("myPc", 'suggestqueries.google.com');
+                    xhr.onload = function (e) {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+
+                                var resp = xhr.responseText;
+                                resp=convertToHumanPls(resp);
+                                //$.ajax({});
+                                var rgx = '\\["'+queryVal+'",\\[';
+                                var rgxFull = new RegExp(rgx,"g");
+                                var replaces=resp.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+                                console.log(rgxFull);
+
+                                rgx = '\\](.*)';
+                                rgxFull = new RegExp(rgx,"g");
+                                replaces=replaces.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+
+                                rgx = '\\[(.*)';
+                                rgxFull = new RegExp(rgx,"g");
+                                replaces=replaces.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+
+                                rgx = '"';
+                                rgxFull = new RegExp(rgx,"g");
+                                replaces=replaces.replace(rgxFull,"");
+                                console.log("replaces");
+                                console.log(replaces);
+
+                                var arrOfSuggestions = replaces.split(",");
+                                document.getElementById("content2").innerHTML="";
+                                for(var i=0;i<arrOfSuggestions.length;i++)
+                                {
+                                    var splittedSuggestion = arrOfSuggestions[i].split(" ");
+                                    document.getElementById("content2").innerHTML += "<br>";
+                                    for(var j=0;j<splittedSuggestion.length;j++)
+                                    {
+                                        document.getElementById("content2").innerHTML += '<a id="'+splittedSuggestion[j]+'" style="font-size: 24px;display:inline-block" href="#" onclick="addToSearchBar(this.id);">'+splittedSuggestion[j]+'</a> ';
+                                    }
+                                }
+
+                                callExp("content2");
+                            } else {
+                                console.error(xhr.statusText);
+                            }
+                        }
+                    };
+                    xhr.onerror = function (e) {
+                        console.error(xhr.statusText);
+                    };
+                    xhr.send(null);
+                }
+            }
+
+
+
+
+
+
+
+
+
+            function right()
+            {
+                console.log("right");
+                if(currentSuggestionIndex!=(-1))
+                {
+                    if(currentSuggestionIndex>25)
+                    {
+                        currentSuggestionIndex=0;
+                    }
+                    else
+                    {
+                        currentSuggestionIndex=currentSuggestionIndex+1;
+                    }
+                    console.log(letters[currentSuggestionIndex]);
+                    document.getElementById("letter").innerHTML = letters[currentSuggestionIndex];
+                    findSuggestionsGivenAdditionalLetter();
+                }
+            }
+            function left()
+            {
+                console.log("left");
+                if(currentSuggestionIndex!=(-1))
+                {
+                    if(currentSuggestionIndex<1)
+                    {
+                        currentSuggestionIndex=26;
+                    }
+                    else
+                    {
+                        currentSuggestionIndex=currentSuggestionIndex-1;
+                    }
+                    console.log(letters[currentSuggestionIndex]);
+                    document.getElementById("letter").innerHTML = letters[currentSuggestionIndex];
+                    findSuggestionsGivenAdditionalLetter();
+                }
+            }
+        </script>
+
+
+
+        <script>
+            function generateSuggestions()
+            {
+                var allItems=document.getElementById("text").innerHTML;
+                var rgx = '<br>';
+                var rgxFull = new RegExp(rgx,"g");
+                var replaces=allItems.replace(rgxFull," ");
+                replaces = replaces.slice(0, -1);
+                console.log("replaces");
+                console.log(replaces);
+                closeNavCheck();
+                openNavKey();
+                document.getElementById('query').value=replaces;
+                findSuggestions();
+            }
+        </script>
+
+
+
+        <div id="mySidenavKey" class="sidenav" style="background-color: #69140E;">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNavKey()">&times;</a>
+            <div id="searchSection" style="color:#F2F3AE;float:left;width:100%;">
+                <div id="search" class="search" onmouseover="makeActive(this.id)" onmouseout="makeInactive(this.id)" style="position: relative;display:inline-block;float:right;height:40px;width:60px;padding-right: 30px;padding-left: 10px;top: 2px;cursor: pointer;" onclick="AAAAAAAAAAfindSuggestions();">
+                    <img id="search0" class="image" type="image" src="imgs/search.png" style="position: relative;top: 0;left: 0;float:right;height:40px;width:60px;"/>
+                    <img id="search1" class="hidden" type="image" src="imgs/searchActive.png" style="position: absolute;padding-left: 10px;top: 0;left: 0;float:right;height:40px;width:60px;"/>
+                </div>
+                <style>
+                    .loader {
+                        border: 16px solid #F2F3AE;
+                        border-radius: 50%;
+                        border-top: 16px solid #3C1518;
+                        width: 120px;
+                        height: 120px;
+                        -webkit-animation: spin 2s linear infinite; /* Safari */
+                        animation: spin 2s linear infinite;
+                    }
+
+                    /* Safari */
+                    @-webkit-keyframes spin {
+                        0% { -webkit-transform: rotate(0deg); }
+                        100% { -webkit-transform: rotate(360deg); }
+                    }
+
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+
+                <div id="plus" class="search" onmouseover="makeActive(this.id)" onmouseout="makeInactive(this.id)" style="position: relative;display:inline-block;float:right;height:40px;width:40px;padding-right: 10px;padding-left: 10px;top: 0px;cursor: pointer;" onclick="addNode();">
+                    <img id="plus0" class="image" type="image" src="imgs/plus.png" style="position: relative;top: 0;left: 0;float:right;height:40px;width:40px;"/>
+                    <img id="plus1" class="hidden" type="image" src="imgs/plusActive.png" style="position: absolute;padding-left: 10px;top: 0;left: 0;float:right;height:40px;width:40px;"/>
+                </div>
+
+                <input id="query" type="text" style="width:200px;height:40px;font-size:24px;float:right;background-color:#F2F3AE"/>
+            </div>
+            <div id="content2" style="color:#F2F3AE; padding-right:30px;" align="right">
+                <br><br>
+            </div>
+            <div id="right" class="search" onmouseover="makeActive(this.id)" onmouseout="makeInactive(this.id)" style="position: relative;float:right;height:50px;width:50px;padding-right: 30px;top: 24px;cursor: pointer;" onclick="right();">
+                <img id="right0" class="image" type="image" src="imgs/right.png" style="position: relative;top: 0;left: 0;float:right;height:50px;width:50px;"/>
+                <img id="right1" class="hidden" type="image" src="imgs/rightActive.png" style="position: absolute;top: 0;left: 0;padding-right: 30px;float:right;height:50px;width:50px;"/>
+            </div>
+            <div id="left" class="search" onmouseover="makeActive(this.id)" onmouseout="makeInactive(this.id)" style="position: relative;float:left;height:50px;width:50px;padding-left: 30px;top: 24px;cursor: pointer;" onclick="left();">
+                <img id="left0" class="image" type="image" src="imgs/left.png" style="position: relative;top: 0;left: 0;float:left;height:50px;width:50px;"/>
+                <img id="left1" class="hidden" type="image" src="imgs/leftActive.png" style="position: absolute;top: 0;left: 0;padding-left: 30px;float:left;height:50px;width:50px;"/>
+            </div>
+            <div id="letter" style="color:#F2F3AE; text-align:center;font-size: 24px;padding-top: 34px;" align="right">
+                relevant
+            </div>
+            <div id="letter" style="color:#F2F3AE; text-align:center;font-size: 24px;padding-top: 34px;" align="right">
+                List Insertion
+            </div>
+            <div id="letter" style="color:#F2F3AE;padding-top: 34px; padding:20px" align="right">
+                <textarea id="txta" rows="4" cols="50" style="background-color:#F2F3AE;width: 100%;height: 200px">Paste the list, then click the button below</textarea>
+
+                <div id="searchb" class="search" onmouseover="makeActive(this.id)" onmouseout="makeInactive(this.id)" style="position: relative;margin:0px auto;height:40px;width:60px;padding: 30px;top: 2px;cursor: pointer;" onclick="insertList();">
+                    <img id="searchb0" class="image" type="image" src="imgs/search.png" style="position: relative;top: 0;left: 0;float:right;height:40px;width:60px;"/>
+                    <img id="searchb1" class="hidden" type="image" src="imgs/searchActive.png" style="position: absolute;padding: 30px;top: 0;left: 0;float:right;height:40px;width:60px;"/>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+
+        <div id="mySidenavCheck" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNavCheck()">&times;</a>
+            <div id="searcha" class="searchh" onmouseover="makeActive(this.id)" onmouseout="makeInactive(this.id)" style="position: relative;display:inline-block;float:right;height:20px;width:30px;padding-right: 30px;padding-left: 10px;top: 0px;cursor: pointer;" onclick="generateSuggestions();">
+                <img id="searcha0" class="image" type="image" src="imgs/search.png" style="position: relative;top: 0;left: 0;float:right;height:20px;width:30px;"/>
+                <img id="searcha1" class="hidden" type="image" src="imgs/searchActive.png" style="position: absolute;padding-left: 10px;top: 0;left: 0;float:right;height:20px;width:30px;"/>
+            </div>
+
+            <a href="javascript:void(0)" onclick="generateSuggestions()" style="font-size: 24px;float:right;">Generate Suggestions</a>
+
+            <div id="text"></div>
+        </div>
+
+        <script>
+            function makeActive(id)
+            {
+                //console.log("makeActive");
+                //console.log(id+"1");
+                document.getElementById(id+"1").style.opacity = 1;
+                //document.getElementById(id+"1").src="../template/save.png";
+            }
+
+            function makeInactive(id)
+            {
+                //console.log("makeInactive");
+                //console.log(id);
+                document.getElementById(id+"1").style.opacity = "0";
+            }
+
+        </script>
+
+        <style>
+            .hidden{
+                opacity:0;   
+                transition:opacity 0.3s linear;
+            }
+
+            .image{
+                opacity:1;
+                transition:opacity 0.3s linear;
+            }
+        </style>
+
+        <div id="anotherOverlay" style="padding-left: 45%;padding-top: 15%;">
+            <div class='loader'></div>
+        </div>
+        <div id="overlay" onclick="off()">
+            <div id="text">Overlay Text</div>
+        </div>
+
+
+
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+        <div id="containerForAll" style="height: 100%;width: 100%;margin-left: 0px;text-align: right">
+            <!--<br>
+<label class="switch" id="editSwitch"  style="margin-left: 5px">
+<input type="checkbox" onchange="editModeChanged(this)">
+<span class="slider round"></span>
+</label> -->
+
+            <img id="imgDelete" src="imgs/trash.png" alt="hi" style="height: 50px;width: 50px;margin-left: 0px;position:absolute;left:20px;"  onclick="deleteNode(this)">
+            <img id="imgDelete" src="imgs/blank.png" alt="hi" style="height: 50px;width: 50px;margin-left: 0px;position:absolute;left:70px;"  onclick="allowMoreNodes()">
+            <img id="imgSwitch1" src="imgs/blank.png" alt="hi" style="height: 50px;width: 50px;margin-right: 20px"  onclick="textMode(this)">
+            <img id="imgSwitch2" src="imgs/blank.png" alt="hi" style="height: 50px;width: 50px;margin-right: 20px"  onclick="checkListMode(this)">
+            <img id="imgSwitch" src="imgs/edit.png" alt="hi" style="height: 50px;width: 50px;margin-right: 20px"  onclick="editModeChanged(this)">
+
+            <div id="mynetwork" style="pointer-events: none;height: 100%;width: 100%;margin-left: 0px; border-width: 0px;">
+
+            </div>
+        </div>
+
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+        <!-- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -- HEADERS FOR VIS.JS GRAPHS -->
+
+
+
+        <div id="graph">
+            <div id="scale">
+            </div>
+            <ul id="area">  
+                <li id="hello">15:2007:lightblue</li>
+                <li id="hi">3:2007:lightblue</li>
+                <li id="w">7:2008:lightgreen</li>
+                <li id="a">53:2009:yellow</li>
+                <li id="s">10:2010:cyan</li>
+            </ul>
+        </div>
+        <div id="labels" >Years : </div>
+
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+        <h2>ADD CUSTOM RECORD</h2>
+        <form action="trasporta.php" method="post">
+            ID (int number): <input type="text" name="aI"><br>
+            name of stand: <input type="text" name="aN"><br>
+            status of stand (active/inactive): <input type="text" name="aC"><br>
+            count: <input type="text" name="aA"><br>
+            <input type="submit" name="invia" value="create">
+        </form>
+        <hr>
+
+        <h2>GET TEXT VERSION OF GRAPH</h2>
+        <form action="cerca.php" method="post">
+            <input type="submit" name="invia" value="get text">
+        </form>
+        <hr>
+
+
+
+
+
+
+
+        <script>
+            function makeGraph(container, labels, area)
+            {
+                container = document.getElementById(container);
+                labels = document.getElementById(labels);
+                area = document.getElementById(area);
+                var dnl = container.getElementsByTagName("li");
+                labels.innerHTML="";
+                //area.innerHTML="";
+
+                var color = "linear-gradient(#CA2420,#CA2420    )";
+                var spaceBetweenBars=20;
+                var leftSpaceYAxis=52;
+                var topSpace=130;
+                var spaceToLeaveTopEDITMEEEEE=800;
+                var spaceToLeaveOnRight=50;
+                var WinWidth=$(window).width()- (spaceBetweenBars*2+leftSpaceYAxis)-spaceToLeaveOnRight;
+                var WinHeight=document.body.clientHeight;
+                var ulWidth=WinWidth-leftSpaceYAxis+spaceBetweenBars;
+                area.style.width = ulWidth;
+                area.style.height = WinHeight-topSpace*2;
+                area.style.top=spaceToLeaveTopEDITMEEEEE;
+                //console.log(WinHeight);
+                var tallestBuilding=0;
+
+                var buildingHeight = [];
+                var buildingName = [];
+                var buildingCol = [];
+                var buildingID = [];
+
+                //below loop for picking tallest building
+                for(var i = 0; i < dnl.length; i++)
+                {
+                    var item = dnl.item(i);
+                    var value = item.innerHTML;
+                    var content = value.split(":");
+                    value = content[0];
+                    //console.log(value);
+                    buildingHeight.push(parseInt(value));
+                    buildingName.push(content[1]);
+                    buildingCol.push(content[2]);
+                    buildingID.push(item.id);
+                    //console.log("item.id");//console.log(item.id);
+                    if (parseInt(value) > parseInt(tallestBuilding)) {
+                        //console.log("innnnnnnn");
+                        tallestBuilding=value;
+                    } else {
+                        //console.log("out");
+                    }
+                }
+                //console.log("tallestBuilding");
+                //console.log(tallestBuilding);
+                //console.log("HEIGHT");
+                //console.log(WinHeight-topSpace);
+
+                //below loop for sorting buildings
+                var swapped;
+                do {
+                    swapped = false;
+                    for (var i=0; i < buildingHeight.length-1; i++) {
+                        if (buildingHeight[i] < buildingHeight[i+1]) {
+
+                            var tempCount = buildingHeight[i];
+                            buildingHeight[i] = buildingHeight[i+1];
+                            buildingHeight[i+1] = tempCount;
+
+                            var tempName = buildingName[i];
+                            buildingName[i] = buildingName[i+1];
+                            buildingName[i+1] = tempName;
+
+                            var tempCol = buildingCol[i];
+                            buildingCol[i] = buildingCol[i+1];
+                            buildingCol[i+1] = tempCol;
+
+                            var tempID = buildingID[i];
+                            buildingID[i] = buildingID[i+1];
+                            buildingID[i+1] = tempID;
+
+                            swapped = true;
+                        }
+                    }
+                } while (swapped);
+
+                for(var i = 0; i < buildingHeight.length; i++)
+                {
+                    //console.log(buildingHeight[i]);
+                }
+
+
+
+
+
+                buildYAxis(tallestBuilding);
+
+                var tallestBuildingInt=parseInt(tallestBuilding);
+                //console.log("tallestBuilding: --->"+tallestBuildingInt);
+
+                var n=(tallestBuildingInt < 1000);
+                var k=(1000 <= tallestBuildingInt)&(tallestBuildingInt < 1000000);
+                var m=(1000000 <= tallestBuildingInt)&(tallestBuildingInt < 1000000000);
+                var g=(1000000000 <= tallestBuildingInt)&(tallestBuildingInt < 1000000000000);
+                var t=(1000000000000 <= tallestBuildingInt)&(tallestBuildingInt < 1000000000000000);
+
+                var letterToUse="";
+                var coeffAccordingToODG3by3=1;
+                if(n)
+                {
+                    //console.log("normal numbers");
+                    //console.log(tallestBuildingInt);
+                }
+                else
+                {
+                    if(k)
+                    {
+                        //console.log("k numbers");
+                        //console.log(tallestBuildingInt);
+                        letterToUse="K";
+                        coeffAccordingToODG3by3=1000;
+                    }
+                    else
+                    {
+                        if(m)
+                        {
+                            //console.log("m numbers");
+                            //console.log(tallestBuildingInt);
+                            letterToUse="M";
+                            coeffAccordingToODG3by3=1000000;
+                        }
+                        else
+                        {
+                            if(g)
+                            {
+                                //console.log("g numbers");
+                                //console.log(tallestBuildingInt);
+                                letterToUse="G";
+                                coeffAccordingToODG3by3=1000000000;
+                            }
+                            else
+                            {
+                                //console.log("I dont even know anymore");
+
+                            }
+                        }                                                                                                           
+                    }
+                }
+                var odg=tallestBuilding.toString().length;
+                var coeffAccordingToODG=Math.pow(10, odg);
+
+                var topValueToHave=Math.ceil(tallestBuildingInt/(coeffAccordingToODG/10));
+                //console.log("topValueToHave"+topValueToHave);
+                var actualGraphHeight= WinHeight-topSpace*2;
+                var bandOfTen= Math.ceil(tallestBuildingInt/(coeffAccordingToODG/10))*coeffAccordingToODG/10;
+                var multiplierCoefficient=(actualGraphHeight)/bandOfTen;
+
+                /*switch (letterToUse) {
+                    case "":
+
+                        break;
+                    case ("K"):
+                        tallestBuildingInt=tallestBuildingInt*1000;
+                        bandOfTen= Math.ceil(tallestBuildingInt/10)*10;
+                        multiplierCoefficient=(actualGraphHeight)/bandOfTen;
+                        tallestBuildingInt=tallestBuildingInt/1000;
+                        break;
+                    case ("M"):
+                        tallestBuildingInt=tallestBuildingInt*1000000;
+                        bandOfTen= Math.ceil(tallestBuildingInt/10)*10;
+                        multiplierCoefficient=(actualGraphHeight)/bandOfTen;
+                        tallestBuildingInt=tallestBuildingInt/1000000;
+                        break;
+                    case ("G"):
+                        tallestBuildingInt=tallestBuildingInt*1000000000;
+                        bandOfTen= Math.ceil(tallestBuildingInt/10)*10;
+                        multiplierCoefficient=(actualGraphHeight)/bandOfTen;
+                        tallestBuildingInt=tallestBuildingInt/1000000000;
+                        break;
+                    default:
+                        alert("none");
+                        break;
+                }*/
+
+                //console.log("actualGraphHeight: "+actualGraphHeight);
+                //console.log("bandOfTen: "+bandOfTen);
+                //console.log("coeffAccordingToODG: "+coeffAccordingToODG);
+
+                //console.log("multiplierCoefficient: "+multiplierCoefficient);
+
+                scale = document.getElementById("scale");
+                scale.innerHTML="";
+                var minMult=(bandOfTen)/topValueToHave;
+                //console.log("minMult: "+minMult);
+
+                if (minMult<10)
+                {
+                    minMult=10;
+                    bandOfTen= Math.ceil(1/10)*10;
+                    multiplierCoefficient=(actualGraphHeight)/bandOfTen;
+                }
+                //below loop for y axis
+
+
+
+
+                for(var i = 0; i < Math.trunc( ((actualGraphHeight)/multiplierCoefficient)/minMult )+1; i++)
+                {
+
+                    scale.innerHTML = scale.innerHTML +"<div style='position:absolute;left:3px;top:"+(actualGraphHeight-(i*minMult*multiplierCoefficient)+5+spaceToLeaveTopEDITMEEEEE)+"px;'>" + (i*minMult/coeffAccordingToODG3by3) +""+letterToUse+"</div>";
+                    scale.innerHTML = scale.innerHTML +"<div style='position:absolute;height:1px;width:8px;left:44px;top:"+(actualGraphHeight-(i*minMult*multiplierCoefficient)+15+1+spaceToLeaveTopEDITMEEEEE)+"px;background:"+ color+";'></div>";
+
+                }
+
+
+
+                //below loop for building buildings
+                for(var i = 0; i < buildingHeight.length; i++)
+                {
+                    var item = dnl.item(i);
+                    var value = item.innerHTML;
+
+                    var content = value.split(":");
+                    valueORI = buildingHeight[i];
+                    value = buildingHeight[i]*multiplierCoefficient;
+
+
+                    var barWidth=(WinWidth/dnl.length)-spaceBetweenBars;
+                    item.style.width = barWidth + "px";
+
+                    item.style.height=value + "px";
+                    item.style.top=(actualGraphHeight-1 - value) + "px";
+                    var interval=(i * (barWidth + 20)+20)
+                    item.style.left = interval + "px";
+                    item.style.height = value + "px";
+
+                    item.innerHTML = "<p style='margin-top:-30px;'>"+valueORI+ "</p>";
+                    item.style.visibility="visible";	
+                    //color = content[2] changed to buildingCol[i];
+                    //if(color != false) item.style.background=color;
+                    labels.innerHTML = labels.innerHTML +"<div id='standName' style='position:absolute;transform: rotate(60deg);transform-origin: 0% 0%;left:"+(leftSpaceYAxis+18+10+ interval+barWidth/2)+"px;top:"+(actualGraphHeight+100+spaceToLeaveTopEDITMEEEEE+WinHeight)+"px;'><b>" + buildingName[i]+ "</b> ("+buildingID[i]+")" + "</div>";//background:"+ color+";(leftSpaceYAxis+18is left margin+20 is height of text+ interval)
+
+
+                }
+
+
+            }
+
+
+            function buildYAxis(tallestBuilding)
+            {
+                if(tallestBuilding>=50)
+                {
+                    //console.log("more than 50");
+                }
+                else
+                {
+                    //console.log("less than 50");
+                }
+
+            }
+
+            function setup()
+            {
+                //console.log('setup');
+                //re add if not load beginning
+                /*
+                $.ajax({
+                    data:"cI=testPostName",
+                    url:'https://mildlyinterestingadventures.000webhostapp.com/PHP/cerca.php',
+                    method:'POST',
+                    success:function(data)
+                    {
+                        //console.log(data);
+                    }
+                });*/
+            }
+
+            function start()
+            {
+                //console.log('start');
+                setup();
+                makeGraph("graph", "labels", "area");
+                phpadd();
+            }
+            window.onload = start;
+
+
+            window.onload=function () { start() }
+
+
+            function test()
+            {
+                var ulHeight=$("graph").style;
+                //console.log(ulHeight);
+            }
+
+
+
+            var myVar = setTimeout(phpadd, 3000);
+
+            function phpadd() {
+
+                var username="aaaaoooo";
+                $.ajax({
+                    url:'listen.php',
+                    method:'POST',
+                    data:{name:username},
+                    success:function(data)
+                    {
+                        //console.log(data);
+                        var a=data.replace(/\n/ig, "");
+                        var res = a.split("<br><br>");
+                        //console.log(res);
+                        document.getElementById("area").innerHTML="";
+                        for(var i=0;i<res.length-1;i++)
+                        {
+                            var regexed = res[i].match(/nome: (.*?)<br>/g);
+                            var name=regexed[0].substring(6);
+                            name=name.slice(0, -4);
+
+                            var regexed = res[i].match(/ID: (.*?)<br>/g);
+                            var ID=regexed[0].substring(4);
+                            ID=ID.slice(0, -4);
+
+                            regexed = res[i].match(/cognome: (.*?)<br>/g);
+                            var color=regexed[0].substring(9);
+                            color=color.slice(0, -4);
+
+                            regexed = res[i].match(/nascita: (.*?)$/g);
+                            var num=regexed[0].substring(9);
+
+
+                            //console.log(ID);
+                            //console.log(num+":"+name+":"+color);
+                            if(color=="inactive")
+                            {
+                                //console.log("INACTIVE INACTIVE  INACTIVE   INACTIVE  INACTIVE INACTIVE  INACTIVE   INACTIVE  INACTIVE INACTIVE  INACTIVE   INACTIVE  INACTIVE INACTIVE  INACTIVE   INACTIVE  INACTIVE");
+                            }
+                            else
+                            {
+                                document.getElementById("area").innerHTML = document.getElementById("area").innerHTML+"<li id='"+ID+"'>"+num+":"+name+":"+color+"</li>";
+                            }
+
+
+                        }
+                        makeGraph("graph", "labels", "area");
+
+                    }
+                });
+
+            }
+        </script>
+        <p id="demoString"></p>
+
+
+
+
+
+        <h2>DELETE USING NAME</h2>
+        <form action="elimina.php" method="post">
+            Insert the keyword to delete: <input type="text" name="eI"><br>
+            <input type="submit" name="invia" value="delete">
+        </form>
+        <hr>
+
+
+
+
+
+
+
+
+        <h2>EDIT ANY FIELD GIVEN THE ID</h2>
+        <form action="mod.php" method="post">
+            ID: <input type="text" name="mI"><br><br>
+            Replacement name: <input type="text" name="mN"><br>
+            Replacement info: <input type="text" name="mC"><br>
+            Replacement count: <input type="text" name="mA"><br>
+            <input type="submit" name="invia" value="edit record">
+        </form>
+        <hr>
+
+        <h2>EDIT NAME</h2>
+        <form action="mod_SetName.php" method="post">
+            ID: <input type="text" name="mI"><br><br>
+            Replacement name: <input type="text" name="mN"><br>
+            <input type="submit" name="invia" value="edit name">
+        </form>
+        <hr>
+
+        <h2>RETIRE/RESURRECT RECORD</h2>
+        <form action="mod_SetColor.php" method="post">
+            Stand Name: <input type="text" name="mN"><br>
+            Replacement status (active/inactive): <input type="text" name="mC"><br>
+            Replacement ID: <input type="text" name="mI"><br><br>
+            <input type="submit" name="invia" value="edit status">
+        </form>
+        <hr>
+
+        <h2>EDIT COUNT</h2>
+        <form action="mod_SetCount.php" method="post">
+            ID: <input type="text" name="mI"><br><br>
+            Replacement count: <input type="text" name="mA"><br>
+            <input type="submit" name="invia" value="edit count">
+        </form>
+        <hr><br><br><br><br><br><br>
+
+
+        <h2>DELETE USING ID</h2>
+        <form action="delete_by_ID.php" method="post">
+            Insert the ID to delete: <input type="text" name="eI"><br>
+            <input type="submit" name="invia" value="delete">
+        </form>
+        <hr>
+        <h2>DELETE <b>EVERYTHING</b></h2>
+        <form action="delete_all_records.php" method="post">
+            <input type="submit" name="invia" value="delete">
+        </form>
+        <hr>
+
+
+
+        <script type="text/javascript" src="js/html2canvas.js"></script>
+        <script>
+            var idOfElCurr="";
+            function callExp(idOfEl)
+            {
+                idOfElCurr="";
+                var btn =  document.getElementById(idOfEl);
+                var reductionFactor = 20;
+                if(idOfEl=="content2")
+                {
+                    reductionFactor = 200;
+                }
+                if(idOfEl=="mynetwork")
+                {
+                    reductionFactor = 400;
+                    idOfElCurr=idOfEl;
+                }
+
+                let width = btn.offsetWidth;
+                let height = btn.offsetHeight
+                let colorData = ctx.getImageData(0, 0, width, height).data;
+
+                // Keep track of how many times we've iterated (in order to reduce
+                // the total number of particles create)
+                let count = 0;
+
+                // Go through every location of our button and create a particle
+                for(let localX = 0; localX < width; localX++) {
+                    for(let localY = 0; localY < height; localY++) {
+                        var offsetP=0;
+                        if(idOfEl=="mynetwork")
+                        {
+                            //                                  max  min       min
+                            offsetP=Math.floor(Math.random() * (500 - 0 + 1)) + 0;
+                        }
+
+
+                        if((count+offsetP) % reductionFactor === 0) {
+                            let index = (localY * width + localX) * 4;
+                            let rgbaColorArr = colorData.slice(index, index + 4);
+
+                            let bcr = btn.getBoundingClientRect();
+                            let globalX = bcr.left + localX;
+                            let globalY = bcr.top + localY;
+
+                            createParticleAtPoint(globalX, globalY, rgbaColorArr);
+                        }
+                        count++;
+                    }
+                }
+            }
+
+
+            var btn = document.querySelector("input");
+            var ctx;
+
+            var colorInfoElem = document.querySelector("#colorInfo");
+            html2canvas(btn).then(canvas => {
+                ctx = canvas.getContext("2d");
+                createParticleCanvas();
+            });
+
+
+
+            /* An "exploding" particle effect that uses circles */
+            var ExplodingParticle = function() {
+                // Set how long we want our particle to animate for
+                this.animationDuration = 1000; // in ms
+
+                // Set the speed for our particle
+                this.speed = {
+                    x: -5 + Math.random() * 10,
+                    y: -5 + Math.random() * 10
+                };
+
+                // Size our particle
+                this.radius = 5 + Math.random() * 5;
+
+                // Set a max time to live for our particle
+                this.life = 30 + Math.random() * 10;
+                this.remainingLife = this.life;
+
+                // This function will be called by our animation logic later on
+                this.draw = ctx => {
+                    let p = this;
+
+                    if(this.remainingLife > 0
+                       && this.radius > 0) {
+                        // Draw a circle at the current location
+                        ctx.beginPath();
+                        ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
+                        if(idOfElCurr=="mynetwork")
+                        {
+                            ctx.fillStyle = "rgba(213, 137, 54, 1)";
+                        }
+                        else
+                        {
+                            ctx.fillStyle = "rgba(242,243,174, 1)";
+                        }
+                        ctx.fill();
+
+                        // Update the particle's location and life
+                        p.remainingLife--;
+                        p.radius -= 0.25;
+                        p.startX += p.speed.x;
+                        p.startY += p.speed.y;
+                    }
+                }
+            }
+
+            var particles = [];
+
+
+            function createParticleAtPoint(x, y, colorData) {
+                let particle = new ExplodingParticle();
+                particle.rgbArray = colorData;
+
+
+                particle.startX = x;
+                particle.startY = y;
+                particle.startTime = Date.now();
+
+                particles.push(particle);
+            }
+
+
+            var particleCanvas, particleCtx;
+            function createParticleCanvas() {
+                // Create our canvas
+                particleCanvas = document.createElement("canvas");
+                particleCtx = particleCanvas.getContext("2d");
+
+                // Size our canvas
+                particleCanvas.width = window.innerWidth;
+                particleCanvas.height = window.innerHeight;
+
+                // Position out canvas
+                particleCanvas.style.position = "absolute";
+                particleCanvas.style.top = "0";
+                particleCanvas.style.left = "0";
+
+                // Make sure it's on top of other elements
+                particleCanvas.style.zIndex = "1001";
+
+                // Make sure other elements under it are clickable
+                particleCanvas.style.pointerEvents = "none";
+
+                // Add our canvas to the page
+                document.body.appendChild(particleCanvas);
+            }
+
+
+
+            function update() {
+                // Clear out the old particles
+                if(typeof particleCtx !== "undefined") {
+                    particleCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                }
+
+                // Draw all of our particles in their new location
+                for(let i = 0; i < particles.length; i++) {
+                    particles[i].draw(particleCtx);
+
+                    // Simple way to clean up if the last particle is done animating
+                    if(i === particles.length - 1) {
+                        let percent = (Date.now() - particles[i].startTime) / particles[i].animationDuration;
+
+                        if(percent > 1) {
+                            particles = [];
+                        }
+                    }
+                }
+
+                // Animate performantly
+                window.requestAnimationFrame(update);
+            }
+            window.requestAnimationFrame(update);
+        </script>
+    </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <style>
+
+        #graph
+        {
+            position:relative;
+            height:216px;
+            margin:8px;
+            padding:0;	
+        }
+        #graph ul
+        {
+            position:absolute;
+            top:0;
+            left:52px;
+            border-left:1px solid black;
+            border-bottom:1px solid black;	
+        }
+        #graph li
+        {
+            position:absolute;	
+            list-style:none;
+            width:40px;
+            text-align:center;
+            background-image: linear-gradient(#CA2420,#CA2420);
+            visibility: hidden;
+            border-radius: 10px;
+        }
+
+        #standName
+        {
+            font-size: 20px;
+        }
+
+        @font-face {
+            font-family: mySecondFont;
+            src: url("fonts/sansation_light.woff");
+        }
+        @font-face {
+            font-family: myFirstFont;
+            src: url("fonts/helvetica.woff");
+        }
+
+        h1,h2,h3,p,div,form
+        {
+            color: black;
+            font-family: myFirstFont;white-space: nowrap;
+        }
+        p {
+            font-size: 20px;
+
+        }
+
+
+    </style>
+
+
+    <style>
+        #anotherOverlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2;
+            cursor: pointer;
+        }
+    </style>
+
+    <style>
+        #overlay {
+            position: fixed;
+            display: none;
+            width: 50%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        #text{
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            font-size: 50px;
+            color: #F2F3AE;
+            /*transform: translate(-50%,-50%);
+            -ms-transform: translate(-50%,-50%);*/
+        }
+    </style>
+
+
+
+
+
+    <style>
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #3C1518;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidenav a {
+            /*padding: 8px 8px 8px 32px;*/
+            text-decoration: none;
+            font-size: 24px;
+            color: #F2F3AE;
+            display: block;
+            transition: 0.5s;
+        }
+
+        .sidenav a:hover {
+            color: #D58936;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 24px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        #mynetwork {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
+        }
+    </style>
+
+</html>

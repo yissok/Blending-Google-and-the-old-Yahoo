@@ -1,0 +1,21 @@
+Header set Access-Control-Allow-Origin "*"
+
+Give access to apache
+cd /Users/andrealissak/.bitnami/stackman/machines/xampp/volumes/root/htdocs/yoogle
+find /Users/andrealissak/.bitnami/stackman/machines/xampp/volumes/root/htdocs/yoogle -type f -print -exec chmod 644 {} \;
+
+
+
+
+
+
+
+
+cioa asdf
+asdflolciaocioa
+asdf-l0l
+
+
+AIzaSyCQEpul_mzwbjGpoT4qHYg-X1h83kn8xC8
+
+017758072927425657890:kqgnper_5b0

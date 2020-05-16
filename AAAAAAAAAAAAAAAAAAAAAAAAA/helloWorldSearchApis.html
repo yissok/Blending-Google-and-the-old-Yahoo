@@ -1,0 +1,185 @@
+<!--
+AIzaSyDtUSk5jFQ8sZc_7oWcp60v6nLL4mhEles
+006160353462852140707:hmravflp3qw
+-->
+
+
+
+<!DOCTYPE html>
+<html>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <body>
+
+        <h1>Hello World!</h1>
+
+
+
+
+        <input id="query" type="text"/>
+        <input id="search" type="button" value="search" onclick="myFunction();" />
+        <div id="content2"></div>
+        <div id="content"></div>
+        <script>
+
+            function recursiveNetwork()
+            {
+                $.ajax({
+                    url:'../update_connections.php',
+                    method:'GET',
+                    success:function(data)
+                    {
+
+                        console.log(data);
+                        if(String(data).includes("incomplete"))
+                        {
+                            console.log("recursing");
+                            recursiveNetwork();
+                        }
+                        else
+                        {
+                            console.log("NOT recursing");
+                        }
+                    }
+                });
+            }
+
+            function myFunction() {
+
+                var newId=-1;
+                var checkIDsToAssign = new XMLHttpRequest();
+                checkIDsToAssign.open("GET", "../listen_all_IDs.php", true);
+                checkIDsToAssign.onload = function (e) {
+                    if (checkIDsToAssign.readyState === 4) {
+                        if (checkIDsToAssign.status === 200) 
+                        {
+
+
+                            var IDsString=checkIDsToAssign.responseText;//.split(',');
+                            console.log(IDsString);
+
+
+                            if((IDsString.length)>2)
+                            {
+                                IDsString = IDsString.substring(0, IDsString.length - 2);
+
+                                console.log("all IDs after: "+IDsString);
+                                var arrOfStringIDs=IDsString.split(',');
+                                console.log("indexes"+arrOfStringIDs);
+                                for (index in arrOfStringIDs)
+                                {
+                                    console.log(index);
+                                    if (parseInt(index)>newId);
+                                    {
+                                        newId=parseInt(index);
+                                    }
+                                }
+                                var i=0;
+                                while (i<=newId+1)
+                                {
+                                    console.log(i);
+                                    if (arrOfStringIDs.includes(i.toString()))
+                                    {
+                                        console.log("next");
+                                    }
+                                    else
+                                    {
+                                        console.log("ID not found, chance for new ID");
+                                        newId=i;
+                                        break;
+                                    }
+                                    i=i+1;
+                                }
+                            }
+                            else
+                            {
+                                newId=0;
+                            }
+                            console.log("newId"+newId);
+
+
+                            var queryVal=document.getElementById('query').value;
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", "https://www.googleapis.com/customsearch/v1?key=AIzaSyDtUSk5jFQ8sZc_7oWcp60v6nLL4mhEles&cx=006160353462852140707:hmravflp3qw&q="+queryVal, true);
+                            //1) xhr.open("GET", "https://www.googleapis.com/customsearch/v1?key=AIzaSyDtUSk5jFQ8sZc_7oWcp60v6nLL4mhEles&cx=006160353462852140707:hmravflp3qw&q="+queryVal, true);
+                            //2) xhr.open("GET", "https://www.googleapis.com/customsearch/v1?key=AIzaSyCQEpul_mzwbjGpoT4qHYg-X1h83kn8xC8&cx=017758072927425657890:kqgnper_5b0&q="+queryVal, true);
+                            xhr.onload = function (e) {
+                                if (xhr.readyState === 4) {
+                                    if (xhr.status === 200) {
+
+                                        var n = xhr.responseText.match('"totalResults": ".*?"');
+                                        var finalNumber=n[0].substring(17);
+                                        finalNumber = finalNumber.substring(0, finalNumber.length - 1);
+                                        document.getElementById("content2").innerHTML += "<br>" + finalNumber;
+                                        $.ajax({
+                                            data:"aI="+newId+"&aN="+queryVal+"&aC=ciao&aA="+finalNumber+"",
+                                            url:'../trasporta.php',
+                                            method:'POST',
+                                            success:function(data)
+                                            {
+                                                //console.log(data);
+                                                recursiveNetwork();
+
+                                            }
+                                        });
+
+
+
+
+
+                                    } else {
+                                        console.error(xhr.statusText);
+                                    }
+                                }
+                            };
+                            xhr.onerror = function (e) {
+                                console.error(xhr.statusText);
+                            };
+                            xhr.send(null);
+
+
+
+
+
+                        } else {
+                            console.error(checkIDsToAssign.statusText);
+                        }
+                    }
+                };
+                checkIDsToAssign.onerror = function (e) {
+                    console.error(checkIDsToAssign.statusText);
+                };
+                checkIDsToAssign.send(null);
+
+
+
+
+
+
+
+
+            }
+        </script>
+
+
+        <!--
+<script>
+
+// Remember to replace YOUR_API_KEY below.
+
+function hndlr(response) {
+for (var i = 0; i < response.items.length; i++) {
+var item = response.items[i];
+// in production code, item.htmlTitle should have the HTML entities escaped.
+document.getElementById("content").innerHTML += "<br>" + item.htmlTitle;
+}
+}
+
+function onLoad
+</script>
+<script src="https://www.googleapis.com/customsearch/v1?key=AIzaSyDtUSk5jFQ8sZc_7oWcp60v6nLL4mhEles&cx=006160353462852140707:hmravflp3qw&q=cars&callback=hndlr">
+</script>-->
+    </body>
+</html>
+
+

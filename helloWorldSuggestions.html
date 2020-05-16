@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <body>
+        <h1>Suggestions</h1>
+        <input id="query" type="text"/>
+        <input id="search" type="button" value="search" onclick="myFunction();" />
+        <div id="content"></div>
+        <script>
+            function myFunction()
+            {
+                var queryVal=document.getElementById('query').value;
+                var xhr = new XMLHttpRequest();
+                
+                xhr.open("GET", "https://cors-anywhere.herokuapp.com/http://suggestqueries.google.com/complete/search?client=firefox&q="+queryVal, true);
+                xhr.setRequestHeader("Origin", 'suggestqueries.google.com');
+                xhr.onload = function (e) {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+
+                            var resp = xhr.responseText;
+                            document.getElementById("content").innerHTML += "<br>" + resp;
+                            //$.ajax({});
+
+
+
+
+
+                        } else {
+                            console.error(xhr.statusText);
+                        }
+                    }
+                };
+                xhr.onerror = function (e) {
+                    console.error(xhr.statusText);
+                };
+                xhr.send(null);
+            }
+        </script>
+    </body>
+</html>
+
+
